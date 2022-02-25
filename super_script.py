@@ -70,29 +70,26 @@ def create_commendation(
         schoolkid=schoolkid)
 
 
-kid_name = input("ФИО ученика: ").strip()
-subject_title = input(
-    "Название предмета для похвалы: ").strip().capitalize()
-if not kid_name:
-    print("Не указано имя ученика!")
-    exit(1)
-try:
-    schoolkid = get_schoolkid(kid_name)
-except Schoolkid.MultipleObjectsReturned:
-    print("Найдено много учеников, укажите имя точнее!")
-    exit(1)
-except Schoolkid.DoesNotExist:
-    print("Ученик не найден - проверьте имя!")
-    exit(1)
+def hack_db(kid_name: str, subject_title: str) -> None:
+    if not kid_name:
+        print("Не указано имя ученика!")
+        return
+    try:
+        schoolkid = get_schoolkid(kid_name)
+    except Schoolkid.MultipleObjectsReturned:
+        print("Найдено много учеников, укажите имя точнее!")
+        return
+    except Schoolkid.DoesNotExist:
+        print("Ученик не найден - проверьте имя!")
+        return
 
-lesson = get_last_lesson(schoolkid, subject_title)
-if not lesson:
-    print("Не найден урок - проверьте название предмета!")
-    exit(1)
+    lesson = get_last_lesson(schoolkid, subject_title)
+    if not lesson:
+        print("Не найден урок - проверьте название предмета!")
+        return
 
-fix_marks(schoolkid, bad_points=[2, 3], good_point=5)
-remove_chastisements(schoolkid)
-create_commendation(schoolkid, lesson, random.choice(COMENDATIONS))
+    fix_marks(schoolkid, bad_points=[2, 3], good_point=5)
+    remove_chastisements(schoolkid)
+    create_commendation(schoolkid, lesson, random.choice(COMENDATIONS))
 
-print("Шалость удалась!")
-quit()
+    print("Шалость удалась!")
